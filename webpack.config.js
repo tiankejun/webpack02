@@ -1,7 +1,11 @@
 const path = require('path')
+const webpack = require('webpack')
 const {CleanWebpackPlugin} = require('clean-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+// 自定义插件
+const CopyTextWebpackPlugin = require('./src/plugins/CopyTextWebpackPlugin')
+
 const resolve = filePath => { path.resolve(__dirname, filePath)}
 module.exports = {
     entry: './src/index.js',
@@ -9,6 +13,15 @@ module.exports = {
         filename: '[name][hash:6].js',
         path: resolve('./dist'),
         // publicPath: '/'
+    },
+    devServer: {
+        open: true,
+        hot: true,
+        proxy: {
+            '^api/': {
+                target: ''
+            }
+        }
     },
     module: {
         rules: [
@@ -57,12 +70,14 @@ module.exports = {
                         name: 'params01'
                     }
                 }
-            }, {
-                test: /\.js$/,
-                use: {
-                    loader: 'async-replace-loader',
-                }
-            }, {
+            }, 
+            // {
+            //     test: /\.js$/,
+            //     use: {
+            //         loader: 'async-replace-loader',
+            //     }
+            // }, 
+            {
                 test: /\.js$/,
                 exclude: /node_modules/,
                 use: {
@@ -76,11 +91,16 @@ module.exports = {
     },
     plugins: [
         new CleanWebpackPlugin(),
+        // webpack 自带热模块加载
+        new webpack.HotModuleReplacementPlugin(),
         new MiniCssExtractPlugin({
             filename: './assets/css/[name].css'
         }),
         new HtmlWebpackPlugin({
             template: './src/index.html'
+        }),
+        new CopyTextWebpackPlugin({
+            name: 'I am a plugin'
         })
     ]
 }
