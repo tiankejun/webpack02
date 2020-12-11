@@ -49,8 +49,24 @@ module.exports = {
                         limit: 1024 * 3
                     }
                 }
+            }, {
+                test: /\.js$/,
+                use: {
+                    loader: 'replace-loader',
+                    options: {
+                        name: 'params01'
+                    }
+                }
+            }, {
+                test: /\.js$/,
+                use: {
+                    loader: 'async-replace-loader',
+                }
             }
         ]
+    },
+    resolveLoader: {
+        modules: ['node_modules', './src/loaders']
     },
     plugins: [
         new CleanWebpackPlugin(),
